@@ -1,0 +1,24 @@
+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+//
+// Copyright (C) 2016 Freescale Semiconductor, Inc.
+
+/dts-v1/;
+
+#include "imx6ull.dtsi"
+#include "imx6ul-14x14-evk.dtsi"
+
+/ {
+    // use linux gpio-led driver, config dts only.
+   sys_led {
+        compatible = "gpio-leds";
+        led0 {
+            gpios = <&gpio1 3 GPIO_ACTIVE_LOW>;
+            default-state = "off";
+        };
+        beep {
+            gpios = <&gpio5 1 GPIO_ACTIVE_LOW>;
+            default-state = "off";
+        };
+    };
+
+};
