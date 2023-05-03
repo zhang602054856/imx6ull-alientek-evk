@@ -1,0 +1,101 @@
+// SPDX-License-Identifier: (GPL-2.0 OR MIT)
+//
+// Copyright (C) 2016 Freescale Semiconductor, Inc.
+
+/dts-v1/;
+
+#include "imx6ull.dtsi"
+#include "imx6ul-14x14-evk.dtsi"
+
+/ {
+//model = "Freescale i.MX6 UltraLiteLite 14x14 EVK Board";
+	model = "Freescale i.MX6ULL alientek Board";
+	compatible = "fsl,imx6ull-14x14-evk", "fsl,imx6ull";
+
+    gpio_led {
+        #address-cells = <1>;
+        #size-cells = <1>;
+        compatible = "evk-gpio-led";
+        pinctrl-names = "default";
+        pinctrl-0 = <&pinctrl_led>;
+        led-gpio = <&gpio1 3 GPIO_ACTIVE_LOW>;
+        status = "okay";
+      /*  reg = <
+            /* #define CCM_CCGR1_BASE */
+        /*    0X020C406C  4   */
+            /* #define SW_MUX_GPIO1_IO03_BASE */
+        /*    0X020E0068  4   */
+            /* #define SW_PAD_GPIO1_IO03_BASE */
+        /*    0X020E02F4  4   */
+            /* #define GPIO1_DR_BASE */
+        /*    0X0209C000  4   */
+            /* #define GPIO1_GDIR_BASE*/
+        /*    0X0209C004  4 >;*/
+    };
+    plat_beep {
+        #address-cells = <1>;
+        #size-cells = <1>;
+        compatible = "evk-plat-beep";
+        pinctrl-names = "default";
+        pinctrl-0 = <&pinctrl_beep>;
+        beep-gpio = <&gpio5 1 GPIO_ACTIVE_LOW>;
+        status = "okay";
+    };
+    plat_key {
+        #address-cells = <1>;
+        #size-cells = <1>;
+        compatible = "evk-plat-key";
+        pinctrl-names = "default";
+        pinctrl-0 = <&pinctrl_key>;
+        key-gpio = <&gpio1 18 GPIO_ACTIVE_LOW>;
+        interrupt-parent = <&gpio1>;
+        interrupts = <18 IRQ_TYPE_EDGE_BOTH>;
+        status = "okay";
+    };
+    plat_sound {
+        compatible = "fsl,imx-audio-wm8960";
+        model = "imx6ul-wm8960";
+        audio-cpu = <&sai2>;
+        audio-codec = <&codec>;
+        audio-asrc = <&asrc>;
+        //hp-det-gpio = <&gpio5 4 0>;
+        audio-routing =
+            "Headphone Jack", "HP_L",
+            "Headphone Jack", "HP_R",
+            "LINPUT2", "Mic Jack",
+            "LINPUT1", "Mic Jack",
+            "RINPUT1", "Mic Jack",
+            "RINPUT2", "Mic Jack";
+    };
+
+};
+
+/*jzhang35 modified*/
+&ecspi3 {
+    fsl,spi-num-chipselects = <2>;
+    pinctrl-names = "default";
+    pinctrl-0 = <&pinctrl_ecspi3 
+                 &pinctrl_fbtft>;
+    cs-gpios = <&gpio1 20 GPIO_ACTIVE_LOW>,
+               <&gpio1 1  GPIO_ACTIVE_LOW>; /*cs-select*/
+
+    status = "okay";
+
+    icm20608@0 {
+        compatible = "alientek,icm20608";
+        spi-max-frequency = <4000000>;
+        reg = <0>;
+    };
+
+    fb_st7735@1 {
+        compatible = "sitronix,st7735r";
+        spi-max-frequency = <32000000>;
+        reg = <1>;
+        buswidth = <8>;
+        fps = <30>;
+        rotate = <0>;
+        //backlight-gpios = <&gpio1 3 GPIO_ACTIVE_LOW>;
+        dc-gpios = <&gpio1 25 GPIO_ACTIVE_HIGH>;
+        reset-gpios = <&gpio1 24 GPIO_ACTIVE_LOW>;
+    };
+};
